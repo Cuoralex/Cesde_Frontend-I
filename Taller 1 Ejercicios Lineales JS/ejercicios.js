@@ -1,10 +1,10 @@
 function Ejer1() {
     document.getElementById('enunciado').innerHTML = `
         <p>1. Realiza el cálculo del salario que debe recibir un trabajador que gana un salario con un descuento del 4% por salud y 7% por pensión.</p>
-        <input type="button" value="Calcular salario neto" onclick="calcularSalario()">`;
+        <input type="button" value="Calcular salario neto" onclick="calcularPago()">`;
 }
 
-function calcularSalario() {
+function calcularPago() {
     let salarioBruto = parseFloat(prompt("Ingrese el salario del trabajador:"));
 
     if (isNaN(salarioBruto) || salarioBruto <= 0) {
@@ -107,7 +107,7 @@ function calcularSalario() {
     let horasNormal = parseFloat(prompt("Ingrese el valor de una hora normal:"));
     let horasExtra = parseFloat(prompt("Ingrese el valor de una hora extra:"));
 
-    if (isNaN(horasTrabajo) || horasTrabajo <= 0) {
+    if (isNaN(horasTrabajo) || horasTrabajo <0) {
         alert("Por favor ingrese un número válido o mayor a 0.0.");
         return;
     }
