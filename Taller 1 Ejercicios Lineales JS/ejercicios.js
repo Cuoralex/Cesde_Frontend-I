@@ -98,53 +98,51 @@ function calcularOperaciones() {
 
 function Ejer4() {
     document.getElementById('enunciado').innerHTML = `
-        <p>4. Calcule el sueldo mensual de un trabajador ingresando el número de horas trabajadas en
-        el mes y el valor tanto de las horas normales de trabajo como de las horas extras.</p>
+        <p>4. Calcule el sueldo mensual de un trabajador ingresando el número de horas normales y extras trabajadas en el mes, y el valor tanto de las horas normales como de las extras.</p>
         <input type="button" value="Calcular sueldo mensual" onclick="calcularSalario()">`;
 }
 
 function calcularSalario() {
-    let horasTrabajo = parseFloat(prompt("Ingrese la cantidad de horas trabajadas por el trabajador al mes:"));
-    let horasNormal = parseFloat(prompt("Ingrese el valor de una hora normal:"));
-    let horasExtra = parseFloat(prompt("Ingrese el valor de una hora extra:"));
+    let horasNormales = parseFloat(prompt("Ingrese la cantidad de horas normales trabajadas en el mes:"));
+    let horasExtras = parseFloat(prompt("Ingrese la cantidad de horas extras trabajadas en el mes:"));
+    let valorHoraNormal = parseFloat(prompt("Ingrese el valor de una hora normal:"));
+    let valorHoraExtra = parseFloat(prompt("Ingrese el valor de una hora extra:"));
 
-    if (isNaN(horasTrabajo) || horasTrabajo < 0) {
-        alert("Por favor ingrese un número válido de horas trabajadas (mayor o igual a 0).");
+    if (isNaN(horasNormales) || horasNormales < 0) {
+        alert("Por favor ingrese un número válido de horas normales (mayor o igual a 0).");
         return;
     }
 
-    if (isNaN(horasNormal) || horasNormal <= 0) {
+    if (isNaN(horasExtras) || horasExtras < 0) {
+        alert("Por favor ingrese un número válido de horas extras (mayor o igual a 0).");
+        return;
+    }
+
+    if (isNaN(valorHoraNormal) || valorHoraNormal <= 0) {
         alert("Por favor ingrese un valor válido para la hora normal (mayor a 0).");
         return;
     }
 
-    if (isNaN(horasExtra) || horasExtra <= 0) {
+    if (isNaN(valorHoraExtra) || valorHoraExtra <= 0) {
         alert("Por favor ingrese un valor válido para la hora extra (mayor a 0).");
         return;
     }
 
-    let jornadaNormal = 44;
-    let horasExtras = Math.max(0, horasTrabajo - jornadaNormal);
-    let horasNormalesTrabajadas = Math.min(horasTrabajo, jornadaNormal);
-
-    let pagoHorasNormales = horasNormalesTrabajadas * horasNormal;
-    let pagoHorasExtras = horasExtras * horasExtra;
-    let salarioTotal = pagoHorasNormales + pagoHorasExtras;
+    let totalPagoNormales = horasNormales * valorHoraNormal;
+    let totalPagoExtras = horasExtras * valorHoraExtra;
+    let totalPago = totalPagoNormales + totalPagoExtras;
 
     document.getElementById('resultado').innerHTML = `
-        Horas trabajadas ingresadas: ${horasTrabajo.toFixed(2)}<br>
-        Jornada normal: ${jornadaNormal} horas<br>
-        Horas normales trabajadas: ${horasNormalesTrabajadas.toFixed(2)}<br>
-        Horas extras: ${horasExtras.toFixed(2)}<br>
-        Valor de una hora normal: $${horasNormal.toFixed(2)}<br>
-        Valor de una hora extra: $${horasExtra.toFixed(2)}<br>
-        Total a pagar por horas normales: $${pagoHorasNormales.toFixed(2)}<br>
-        Total a pagar por horas extras: $${pagoHorasExtras.toFixed(2)}<br>
-        Total a pagar al trabajador: <strong>$${salarioTotal.toFixed(2)}</strong><br>
+        Horas normales trabajadas: ${horasNormales.toFixed(2)}<br>
+        Horas extras trabajadas: ${horasExtras.toFixed(2)}<br>
+        Valor de una hora normal: $${valorHoraNormal.toFixed(2)}<br>
+        Valor de una hora extra: $${valorHoraExtra.toFixed(2)}<br>
+        Total a pagar por horas normales: $${totalPagoNormales.toFixed(2)}<br>
+        Total a pagar por horas extras: $${totalPagoExtras.toFixed(2)}<br>
+        Total a pagar al trabajador: <strong>$${totalPago.toFixed(2)}</strong><br>
         <strong>NOTAR: RECARGAR PÁGINA PARA VOLVER A CALCULAR</strong>
     `;
 }
-
 
 function Ejer5() {
     document.getElementById('enunciado').innerHTML = `
@@ -238,7 +236,7 @@ function calcularPromedio() {
         La primera nota es: ${nota1.toFixed(2)}<br>
         La segunda nota es: ${nota2.toFixed(2)}<br>
         La tercera nota es: ${nota3.toFixed(2)}<br>
-        El promedio de las notas es: <strong>$${promedio.toFixed(2)}</strong><br>
+        El promedio de las notas es: <strong>${promedio.toFixed(2)}</strong><br>
         <strong>NOTAR: RECARGAR PÁGINA PARA VOLVER A CALCULAR</strong>
     `;
 }
