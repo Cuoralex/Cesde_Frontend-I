@@ -80,8 +80,9 @@ function calcularOperaciones() {
     let suma = num1+num2;
     let resta = num1-num2;
     let multiplicacion = num1*num2;
-    let division = num1/num2;
-    let modulo = num1%num2;
+    let division = num2 !== 0 ? (num1 / num2).toFixed(2) : "Error: División por cero";
+    let modulo = num2 !== 0 ? (num1 % num2).toFixed(2) : "Error: Módulo por cero";
+
 
     document.getElementById('resultado').innerHTML = `
         El primer número ingresado es: ${num1.toFixed(2)}<br>
@@ -97,9 +98,9 @@ function calcularOperaciones() {
 
 function Ejer4() {
     document.getElementById('enunciado').innerHTML = `
-        <p>1. Calcule el sueldo mensual de un trabajador ingresando el número de horas trabajadas en
-        el mes y el valor tanto como de las horas normales de trabajo y las horas extras.</p>
-        <input type="button" value="Calcular salario neto" onclick="calcularSalario()">`;
+        <p>4. Calcule el sueldo mensual de un trabajador ingresando el número de horas trabajadas en
+        el mes y el valor tanto de las horas normales de trabajo como de las horas extras.</p>
+        <input type="button" value="Calcular sueldo mensual" onclick="calcularSalario()">`;
 }
 
 function calcularSalario() {
@@ -107,28 +108,43 @@ function calcularSalario() {
     let horasNormal = parseFloat(prompt("Ingrese el valor de una hora normal:"));
     let horasExtra = parseFloat(prompt("Ingrese el valor de una hora extra:"));
 
-    if (isNaN(horasTrabajo) || horasTrabajo <0) {
-        alert("Por favor ingrese un número válido o mayor a 0.0.");
+    if (isNaN(horasTrabajo) || horasTrabajo < 0) {
+        alert("Por favor ingrese un número válido de horas trabajadas (mayor o igual a 0).");
         return;
     }
 
-    let salarioNeto = 1423500;
-    let jornadaNormal = 44;
-    let CantidadHorasExtras = horasTrabajo - jornadaNormal;
+    if (isNaN(horasNormal) || horasNormal <= 0) {
+        alert("Por favor ingrese un valor válido para la hora normal (mayor a 0).");
+        return;
+    }
 
+    if (isNaN(horasExtra) || horasExtra <= 0) {
+        alert("Por favor ingrese un valor válido para la hora extra (mayor a 0).");
+        return;
+    }
+
+    let jornadaNormal = 44;
+    let horasExtras = Math.max(0, horasTrabajo - jornadaNormal);
+    let horasNormalesTrabajadas = Math.min(horasTrabajo, jornadaNormal);
+
+    let pagoHorasNormales = horasNormalesTrabajadas * horasNormal;
+    let pagoHorasExtras = horasExtras * horasExtra;
+    let salarioTotal = pagoHorasNormales + pagoHorasExtras;
 
     document.getElementById('resultado').innerHTML = `
         Horas trabajadas ingresadas: ${horasTrabajo.toFixed(2)}<br>
-        Jornada normal: ${jornadaNormal.toFixed(2)}<br>
-        Horas extras: ${CantidadHorasExtras.toFixed(2)}<br>
+        Jornada normal: ${jornadaNormal} horas<br>
+        Horas normales trabajadas: ${horasNormalesTrabajadas.toFixed(2)}<br>
+        Horas extras: ${horasExtras.toFixed(2)}<br>
         Valor de una hora normal: $${horasNormal.toFixed(2)}<br>
         Valor de una hora extra: $${horasExtra.toFixed(2)}<br>
-        Total a pagar por horas normales: $${(horasNormal * jornadaNormal).toFixed(2)}<br>
-        Total a pagar por horas extras: $${(CantidadHorasExtras * horasExtra).toFixed(2)}<br>
-        Total a pagar al trabajador: <strong>$${(salarioNeto + (CantidadHorasExtras * horasExtra)).toFixed(2)}</strong><br>
+        Total a pagar por horas normales: $${pagoHorasNormales.toFixed(2)}<br>
+        Total a pagar por horas extras: $${pagoHorasExtras.toFixed(2)}<br>
+        Total a pagar al trabajador: <strong>$${salarioTotal.toFixed(2)}</strong><br>
         <strong>NOTAR: RECARGAR PÁGINA PARA VOLVER A CALCULAR</strong>
     `;
 }
+
 
 function Ejer5() {
     document.getElementById('enunciado').innerHTML = `
@@ -144,13 +160,13 @@ function calcularIva() {
         alert("Por favor ingrese un valor válido y mayor a 0.");
         return;
     }
-    let iva = 19;
-    let precioIva = precioProducto+(precioProducto * 0.19);
+    let iva = precioProducto * 0.19;
+    let total = precioProducto + iva;
 
     document.getElementById('resultado').innerHTML = `
         Precio del producto ingresado: $${precioProducto.toFixed(2)}<br>
         Iva aplicado (%): ${iva.toFixed(2)}<br>
-        Total a pagar: <strong>$${precioIva.toFixed(2)}</strong><br>
+        Total a pagar: <strong>$${total.toFixed(2)}</strong><br>
         <strong>NOTAR: RECARGAR PÁGINA PARA VOLVER A CALCULAR</strong>
     `;
 }
@@ -201,17 +217,17 @@ function calcularPromedio() {
     let nota3 = parseFloat(prompt("Ingrese la tercera nota (V.gr. 2.3):"));
     
 
-    if (isNaN(nota1) || nota1 < 0.0 && nota1 > 5.0) {
+    if (isNaN(nota1) || nota1 < 0.0 || nota1 > 5.0) {
         alert("Por favor ingrese un valor válido y mayor a 0.0.");
         return;
     }
 
-    if (isNaN(nota2) || nota2 < 0.0 && nota1 > 5.0) {
+    if (isNaN(nota2) || nota2 < 0.0 || nota2 > 5.0) {
         alert("Por favor ingrese un valor válido y mayor a 0.0.");
         return;
     }
 
-    if (isNaN(nota3) || nota3 < 0.0 && nota1 > 5.0) {
+    if (isNaN(nota3) || nota3 < 0.0 || nota3 > 5.0) {
         alert("Por favor ingrese un valor válido y mayor a 0.0.");
         return;
     }
