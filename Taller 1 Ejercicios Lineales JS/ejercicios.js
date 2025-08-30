@@ -4,7 +4,7 @@ function Ejer1() {
         <input type="button" value="Definir número" onclick="calcularParPositivo()">`;
 }
 
-function calcularPago() {
+function arrecalcularPago() {
     let num = parseInt(prompt("Ingrese un número entero:"));
 
     if (isNaN(num) || !Number.isInteger(num)) {
