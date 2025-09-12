@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Taller DOM - Ejercicios</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Aquí vamos a insertar desde JS un <h1> antes de este div -->
+  <div id="contenedor">
+    <h2>Horario diario</h2>
+
+    <!-- p inicial dentro del div (usaremos JS para insertar otro p después de esta p) -->
+    <p class="ps">Este es el primer párrafo dentro del div.</p>
+
+    <!-- lista original (ol) que más tarde reemplazaremos por ul -->
+    <ol id="tareas">
+      <li>desayunar</li>
+      <li>ir al banco</li>
+      <li>preparar almuerzo</li>
+      <li>hacer almuerzo</li>
+    </ol>
+
+    <!-- algunos párrafos adicionales -->
+    <p class="ps">Otro párrafo con clase ps para dar estilos desde JS.</p>
+    <p>Un párrafo final que será el 'último p' para aplicar negrita y fondo.</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
