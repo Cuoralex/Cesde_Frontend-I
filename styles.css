@@ -1,0 +1,78 @@
+/* Versión A - estilos organizados y responsivos */
+/* Reset sencillo */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html,body { height: 100%; }
+body { font-family: Arial, Helvetica, sans-serif; line-height: 1.4; color: #222; }
+
+/* Loader overlay */
+.loader {
+  position: fixed; inset: 0; display:flex;align-items:center;justify-content:center;
+  background: rgba(255,255,255,0.95); z-index: 9999; font-weight:600;
+  font-size:1rem; transition: opacity .3s ease;
+}
+
+/* Header */
+.header { position: sticky; top: 0; z-index: 60; background: #fff; border-bottom: 1px solid #eee; }
+.header-inner { display:flex; align-items:center; gap:1rem; padding:0.7rem 1rem; max-width:1200px; margin:0 auto; }
+.brand { font-size:1.25rem; flex:1; }
+
+/* Hamburger visible on small screens */
+.hamburger { display:none; font-size:1.25rem; background:none; border:none; cursor:pointer; }
+.nav { display:flex; }
+.nav-list { display:flex; gap:0.75rem; list-style:none; align-items:center; }
+.nav-list a, .nav-list button { text-decoration:none; background:none; border:none; padding:0.35rem 0.5rem; cursor:pointer; color:inherit; }
+
+/* Submenu (hidden by default) */
+.has-submenu { position:relative; }
+.submenu { position:absolute; left:0; top:100%; background:#fff; border:1px solid #ddd; padding:0.5rem; display:none; min-width:160px; box-shadow:0 3px 8px rgba(0,0,0,.05); }
+.submenu li { list-style:none; padding:0.2rem 0; }
+
+/* Sidebar */
+.open-sidebar { position: fixed; left: 0.6rem; top: 4.5rem; z-index: 70; display: none; }
+.sidebar { position: fixed; left: -260px; top: 0; width: 240px; height: 100%; background:#f7f7f7; padding:1rem; transition:left .25s ease; z-index:80; box-shadow: 2px 0 8px rgba(0,0,0,0.06); }
+.sidebar.open { left:0; }
+.close-sidebar { background:none;border:none;cursor:pointer;float:right;font-size:1rem; }
+
+/* Layout main */
+.container { max-width:1100px; margin:1rem auto; padding:0 1rem 4rem; }
+
+/* Panel / accordion */
+.panel-section { margin-bottom:1.5rem; }
+.card { margin:0.6rem 0; }
+.accordion-btn { width:100%; text-align:left; padding:0.6rem; border:1px solid #e0e0e0; background:#fafafa; cursor:pointer; }
+.panel { display:none; padding:0.6rem; border:1px solid #eee; border-top:none; background:#fff; }
+
+/* Utilities */
+.hidden { display:none !important; }
+.info-block { margin:0.6rem 0; padding:0.6rem; border-left:4px solid #2b6cb0; background:#f2f8ff; }
+.small { font-size:0.9rem; }
+
+/* Forms responsive */
+input[type="password"], input[type="text"], select, input[type="text"] {
+  width: 100%; padding:0.45rem; margin-top:0.25rem; border:1px solid #ddd; border-radius:4px;
+}
+label { display:block; margin-top:0.6rem; }
+
+/* Tall filler to allow scroll demo */
+.tall-space { height:900px; background: linear-gradient(#fff,#fbfbfb); margin-top:0.6rem; }
+
+/* Back-to-top button */
+.btn-top { position: fixed; right: 1rem; bottom: 1rem; padding:0.6rem; border-radius:6px; background:#f6ad55; border:none; cursor:pointer; z-index:90; }
+
+/* Tasks */
+.task-list { margin-top:0.6rem; list-style:none; }
+.task-list li { padding:0.5rem; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+
+/* Header scrolled state */
+.header.scrolled { background:#2b6cb0; color:#fff; transition: background .18s ease; }
+
+/* Responsive behavior */
+@media (max-width: 900px) {
+  .nav { display:none; }
+  .hamburger { display:inline-block; }
+  .open-sidebar { display:block; }
+  /* nav when responsive class applied */
+  .nav.responsive { display:block; position:absolute; left:0; right:0; top:100%; background:#fff; padding:0.6rem 1rem; border-bottom:1px solid #eee; }
+  .nav.responsive .nav-list { display:flex; flex-direction:column; gap:0; }
+  .submenu { position:relative; top:0; left:0; box-shadow:none; border:none; padding-left:0.6rem; }
+}

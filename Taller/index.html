@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Versión 1.0 - Orlan Stibel Baena Vanegas</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader" class="loader">Cargando...</div>
+
+  <!-- Header -->
+  <header id="header" class="header">
+    <div class="header-left">
+      <button id="menu-btn" class="icon-btn" aria-label="Abrir menú" aria-expanded="false">☰</button>
+      <button id="side-open" class="icon-btn side-open" aria-label="Abrir sidebar" aria-expanded="false">≡</button>
+    </div>
+
+    <h1 class="brand">Versión 1.0. DOM -Eventos</h1>
+
+    <nav id="nav" class="nav" role="navigation" aria-label="Menú principal">
+      <ul class="nav-list">
+        <li><a href="#accordion">Inicio</a></li>
+        <li class="nav-item-sub">
+          <button class="submenu-btn" aria-expanded="false">Servicios ▾</button>
+          <ul class="submenu" aria-hidden="true">
+            <li><a href="#section-a">Servicio A</a></li>
+            <li><a href="#section-b">Servicio B</a></li>
+            <li><a href="#section-c">Servicio C</a></li>
+          </ul>
+        </li>
+        <li><a href="#form">Form</a></li>
+        <li><a href="#keyboard">Tareas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Overlay para sidebar -->
+  <div id="sidebar-overlay" class="sidebar-overlay hidden" tabindex="-1"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar" aria-hidden="true">
+    <button id="side-close" class="close-btn" aria-label="Cerrar sidebar">✕</button>
+    <nav>
+      <ul>
+        <li><a href="#accordion">Link1</a></li>
+        <li><a href="#form">Link2</a></li>
+        <li><a href="#keyboard">Link3</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <!-- Acordeón -->
+    <section id="accordion" class="section">
+      <h2>Acordeón</h2>
+      <button class="acc-btn">Sec 1</button>
+      <div class="acc-panel">Contenido 1 (demo).</div>
+      <button class="acc-btn">Sec 2</button>
+      <div class="acc-panel">Contenido 2 (demo).</div>
+    </section>
+
+    <!-- Formulario -->
+    <section id="form" class="section">
+      <h2>Form</h2>
+
+      <label><input id="chk-info" type="checkbox" /> Mostrar información</label>
+      <div id="info" class="info hidden">Contenido que se muestra/oculta con el checkbox.</div>
+
+      <label>Escoge sabor:
+        <select id="flavor">
+          <option value="">--</option>
+          <option value="Vainilla">Vainilla</option>
+          <option value="Fresa">Fresa</option>
+          <option value="Chocolate">Chocolate</option>
+        </select>
+      </label>
+      <p id="flavor-txt" class="muted"></p>
+
+      <label for="pwd">Contraseña:</label>
+      <input id="pwd" type="password" placeholder="Contraseña" />
+      <small id="pwd-msg" class="muted hidden">Mínimo 8 caracteres y 1 número</small>
+
+      <label for="pais">País</label>
+      <select id="pais">
+        <option value="">--</option>
+        <option value="co">Colombia</option>
+        <option value="us">Estados Unidos</option>
+      </select>
+
+      <label for="ciudad">Ciudad</label>
+      <select id="ciudad"><option value="">--</option></select>
+
+      <label for="barrio">Barrio</label>
+      <select id="barrio"><option value="">--</option></select>
+    </section>
+
+    <!-- Navegador / Scroll demo -->
+    <section id="nav-events" class="section">
+      <h2>Navegador</h2>
+      <p>Desplázate para ver el cambio del header y el botón subir.</p>
+      <div style="height:700px;"></div>
+      <button id="top" class="top-btn hidden" aria-label="Subir">▲</button>
+    </section>
+
+    <!-- Tareas -->
+    <section id="keyboard" class="section">
+      <h2>Tareas</h2>
+      <div class="task-row">
+        <input id="task" placeholder="Escribe una tarea" />
+        <button id="add" class="add-btn">Añadir</button>
+      </div>
+      <ul id="list"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
