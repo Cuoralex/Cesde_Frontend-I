@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario Profesiones</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Formulario Profesiones</h2>
+
+  <form id="formulario">
+    <input type="hidden" id="indice">
+    <label>Nombre</label>
+    <input type="text" id="nombre" required>
+
+    <label>Profesión</label>
+    <input type="text" id="profesion" required>
+
+    <label>Salario</label>
+    <input type="number" id="salario" required>
+
+    <button type="submit" id="btnGuardar">Guardar</button>
+  </form>
+
+  <div class="busqueda">
+    <input type="text" id="buscador" placeholder="Buscar por nombre...">
+  </div>
+
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Profesión</th>
+        <th>Salario</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>
