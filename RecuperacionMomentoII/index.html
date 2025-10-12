@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>W3.CSS Template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link href='https://fonts.googleapis.com/css?family=RobotoDraft' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        html,
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-family: "RobotoDraft", "Roboto", sans-serif
+        }
+
+        .w3-bar-block .w3-bar-item {
+            padding: 16px
+        }
+
+        /* pequeño ajuste para el panel derecho detalle */
+        #mailDetail .w3-container { padding-top: 8px; padding-bottom: 8px; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Side Navigation -->
+    <nav class="w3-sidebar w3-bar-block w3-collapse w3-white w3-animate-left w3-card" style="z-index:3;width:320px;"
+        id="mySidebar">
+
+        <!-- Logo -->
+        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom w3-large">
+            <img src="https://www.w3schools.com/images/w3schools.png" style="width:60%;">
+        </a>
+
+        <!-- Botón de cierre en pantallas pequeñas -->
+        <a href="javascript:void(0)" onclick="w3_close()" title="Close Sidemenu"
+            class="w3-bar-item w3-button w3-hide-large w3-large">
+            Close <i class="fa fa-remove"></i>
+        </a>
+
+        <!-- Botón para nuevo mensaje -->
+        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-dark-grey w3-hover-black w3-left-align"
+            onclick="document.getElementById('id01').style.display='block'">
+            New Message <i class="w3-padding fa fa-pencil"></i>
+        </a>
+
+        <!-- === INBOX === -->
+        <a id="inboxBtn" onclick="toggleFolder('InboxList', this)" href="javascript:void(0)"
+            class="w3-bar-item w3-button inbox-link">
+            <i class="fa fa-inbox w3-margin-right"></i>
+            Inbox <span class="inbox-count">(3)</span>
+            <i class="fa fa-caret-down w3-margin-left"></i>
+        </a>
+        <div id="InboxList" class="w3-show w3-animate-left"></div>
+
+        <!-- === SENT === -->
+        <a id="sentBtn" onclick="toggleFolder('SentList', this)" href="javascript:void(0)"
+            class="w3-bar-item w3-button sent-link">
+            <i class="fa fa-paper-plane w3-margin-right"></i>
+            Sent <span class="sent-count">(0)</span>
+            <i class="fa fa-caret-down w3-margin-left"></i>
+        </a>
+        <div id="SentList" class="w3-hide w3-animate-left"></div>
+
+        <!-- === DRAFTS === -->
+        <a id="draftBtn" onclick="toggleFolder('DraftList', this)" href="javascript:void(0)"
+            class="w3-bar-item w3-button draft-link">
+            <i class="fa fa-hourglass-end w3-margin-right"></i>
+            Drafts <span class="draft-count">(0)</span>
+            <i class="fa fa-caret-down w3-margin-left"></i>
+        </a>
+        <div id="DraftList" class="w3-hide w3-animate-left"></div>
+
+        <!-- === TRASH === -->
+        <a id="trashBtn" onclick="toggleFolder('TrashList', this)" href="javascript:void(0)"
+            class="w3-bar-item w3-button trash-link">
+            <i class="fa fa-trash w3-margin-right"></i>
+            Trash <span class="trash-count">(0)</span>
+            <i class="fa fa-caret-down w3-margin-left"></i>
+        </a>
+        <div id="TrashList" class="w3-hide w3-animate-left"></div>
+
+    </nav>
+
+
+    <!-- Modal for New Message -->
+    <div id="id01" class="w3-modal" style="z-index:4">
+        <div class="w3-modal-content w3-animate-zoom">
+            <div class="w3-container w3-padding w3-red">
+                <span onclick="document.getElementById('id01').style.display='none'"
+                    class="w3-button w3-red w3-right w3-xxlarge">
+                    <i class="fa fa-remove"></i>
+                </span>
+                <h2>Send Mail</h2>
+            </div>
+            <div class="w3-panel">
+                <label>To</label>
+                <input id="toInput" class="w3-input w3-border w3-margin-bottom" type="text">
+
+                <label>From</label>
+                <input id="fromInput" class="w3-input w3-border w3-margin-bottom" type="text">
+
+                <label>Subject</label>
+                <input id="subjectInput" class="w3-input w3-border w3-margin-bottom" type="text">
+
+                <label>Message</label>
+                <textarea id="bodyInput" class="w3-input w3-border w3-margin-bottom" style="height:150px"
+                    placeholder="What's on your mind?"></textarea>
+
+                <div class="w3-section">
+                    <button id="cancelBtn" class="w3-button w3-red">Cancel <i class="fa fa-remove"></i></button>
+                    <button id="saveDraftBtn" class="w3-button w3-light-grey">Save Draft <i
+                            class="fa fa-save"></i></button>
+                    <button id="sendBtn" class="w3-button w3-light-grey w3-right">Send <i
+                            class="fa fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer"
+        title="Close Sidemenu" id="myOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="w3-main" style="margin-left:320px;">
+        <i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge w3-margin-left w3-margin-top"
+            onclick="w3_open()"></i>
+        <a href="javascript:void(0)" class="w3-hide-large w3-red w3-button w3-right w3-margin-top w3-margin-right"
+            onclick="document.getElementById('id01').style.display='block'"><i class="fa fa-pencil"></i></a>
+
+        <!-- Mail detail container: used for dynamic mails (Trash/Sent/Drafts) and also when showing converted items -->
+        <div id="mailDetail"></div>
+
+        <!-- Folder: Inbox -->
+        <div id="Inbox" class="folder-view">
+            <div id="Borge" class="w3-container person" style="display:none">
+                <br>
+                <img class="w3-round w3-animate-top" src="https://www.w3schools.com/w3images/avatar3.png"
+                    style="width:20%;">
+                <h5 class="w3-opacity">Subject: Remember Me</h5>
+                <h4><i class="fa fa-clock-o"></i> From Borge Refsnes, Sep 27, 2015.</h4>
+                <a class="w3-button w3-light-grey" onclick="replyMail('Borge')">Reply<i
+                        class="w3-margin-left fa fa-mail-reply"></i></a>
+                <a class="w3-button w3-light-grey" onclick="forwardMail('Borge')">Forward<i
+                        class="w3-margin-left fa fa-arrow-right"></i></a>
+                <a class="w3-button w3-light-grey w3-right" onclick="deleteMail('Borge')">Delete<i
+                        class="w3-margin-left fa fa-trash"></i></a>
+                <hr>
+                <p>Hello, i just wanted to let you know that i'll be home at lorem ipsum dolor sit amet...</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                <p>Best Regards,<br>Borge Refsnes</p>
+            </div>
+
+            <div id="Jane" class="w3-container person" style="display:none">
+                <br>
+                <img class="w3-round w3-animate-top" src="https://www.w3schools.com/w3images/avatar5.png"
+                    style="width:20%;">
+                <h5 class="w3-opacity">Subject: None</h5>
+                <h4><i class="fa fa-clock-o"></i> From Jane Doe, Sep 25, 2015.</h4>
+                <a class="w3-button w3-light-grey" onclick="replyMail('Jane')">Reply<i
+                        class="w3-margin-left fa fa-mail-reply"></i></a>
+                <a class="w3-button w3-light-grey" onclick="forwardMail('Jane')">Forward<i
+                        class="w3-margin-left fa fa-arrow-right"></i></a>
+                <a class="w3-button w3-light-grey w3-right" onclick="deleteMail('Jane')">Delete<i
+                        class="w3-margin-left fa fa-trash"></i></a>
+                <hr>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                <p>Forever yours,<br>Jane</p>
+            </div>
+
+            <div id="John" class="w3-container person" style="display:none">
+                <br>
+                <img class="w3-round w3-animate-top" src="https://www.w3schools.com/w3images/avatar2.png"
+                    style="width:20%;">
+                <h5 class="w3-opacity">Subject: None</h5>
+                <h4><i class="fa fa-clock-o"></i> From John Doe, Sep 23, 2015.</h4>
+                <a class="w3-button w3-light-grey" onclick="replyMail('John')">Reply<i
+                        class="w3-margin-left fa fa-mail-reply"></i></a>
+                <a class="w3-button w3-light-grey" onclick="forwardMail('John')">Forward<i
+                        class="w3-margin-left fa fa-arrow-right"></i></a>
+                <a class="w3-button w3-light-grey w3-right" onclick="deleteMail('John')">Delete<i
+                        class="w3-margin-left fa fa-trash"></i></a>
+                <hr>
+                <p>Welcome.</p>
+                <p>That's it!</p>
+            </div>
+        </div>
+
+        <!-- Folder: Sent -->
+        <div id="Sent" class="folder-view" style="display:none">
+            <p class="w3-padding">No sent messages yet.</p>
+        </div>
+
+        <!-- Folder: Drafts -->
+        <div id="Drafts" class="folder-view" style="display:none">
+            <p class="w3-padding">No drafts yet.</p>
+        </div>
+
+        <!-- Folder: Trash -->
+        <div id="Trash" class="folder-view" style="display:none">
+            <p class="w3-padding">Trash is empty.</p>
+        </div>
+    </div>
+
+    <script>
+        /* ===========================================================
+           Script funcional adaptado a tu HTML (mantiene estilos y lógica)
+           =========================================================== */
+
+        /* === W3 helpers (no se cambian) === */
+        function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+        function w3_close() {
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("myOverlay").style.display = "none";
+        }
+
+        // toggle desplegable (mantiene estilo w3-red)
+        function toggleFolder(listId, btn) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            if (list.classList.contains("w3-show")) {
+                list.classList.remove("w3-show");
+                btn.classList.remove("w3-red");
+                list.classList.add("w3-hide");
+            } else {
+                list.classList.remove("w3-hide");
+                list.classList.add("w3-show");
+                btn.classList.add("w3-red");
+            }
+        }
+
+        /* ==================== ESTADO (carpetas) ==================== */
+        let inbox = [
+            { id: "Borge", from: "Borge Refsnes", subject: "Remember Me", date: "Sep 27, 2015", content: "Hello, i just wanted to let you know that I'll be home at...", avatar: "https://www.w3schools.com/w3images/avatar3.png" },
+            { id: "Jane", from: "Jane Doe", subject: "None", date: "Sep 25, 2015", content: "Lorem ipsum dolor sit amet...", avatar: "https://www.w3schools.com/w3images/avatar5.png" },
+            { id: "John", from: "John Doe", subject: "None", date: "Sep 23, 2015", content: "Welcome!", avatar: "https://www.w3schools.com/w3images/avatar2.png" }
+        ];
+        let sent = [];
+        let drafts = [];
+        let trash = [];
+
+        /* ==================== RENDER LATERAL ==================== */
+        function renderFolderList(folderContainerId, array) {
+            const container = document.getElementById(folderContainerId);
+            if (!container) return;
+            container.innerHTML = "";
+            if (!array || array.length === 0) {
+                container.innerHTML = '<div class="w3-container"><p class="w3-padding">Empty.</p></div>';
+                return;
+            }
+            array.forEach(mail => {
+                const a = document.createElement("a");
+                a.href = "javascript:void(0)";
+                a.className = "w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey";
+                a.dataset.mailId = mail.id;
+                a.innerHTML = `
+                  <div class="w3-container">
+                    <img class="w3-round w3-margin-right" src="${mail.avatar || 'https://www.w3schools.com/w3images/avatar2.png'}" style="width:15%;">
+                    <span class="w3-opacity w3-large">${mail.from || mail.to || "Unknown"}</span>
+                    <h6>Subject: ${mail.subject || "None"}</h6>
+                    <p>${(mail.content || "").substring(0, 60)}...</p>
+                  </div>`;
+                a.addEventListener("click", function () {
+                    // marcar visualmente
+                    document.querySelectorAll("#InboxList .test, #SentList .test, #DraftList .test, #TrashList .test").forEach(el => el.className = el.className.replace(" w3-light-grey", ""));
+                    this.className += " w3-light-grey";
+                    // mostrar detalle
+                    openMail(mail.id);
+                    // cerrar sidebar (comportamiento original en pantallas pequeñas)
+                    try { w3_close(); } catch (e) {}
+                });
+                container.appendChild(a);
+            });
+        }
+
+        function renderMailLists() {
+            renderFolderList("InboxList", inbox);
+            renderFolderList("SentList", sent);
+            renderFolderList("DraftList", drafts);
+            renderFolderList("TrashList", trash);
+        }
+
+        /* ==================== Mostrar detalle (usa mailDetail cuando no hay person div) ==================== */
+        function openMail(personName) {
+            // ocultar todas las person divs (las que están dentro de Inbox)
+            document.querySelectorAll(".person").forEach(p => p.style.display = "none");
+            // limpiar mailDetail
+            const detail = document.getElementById("mailDetail");
+            detail.innerHTML = "";
+
+            // buscar mail en arrays
+            const mail = inbox.find(m => m.id === personName) ||
+                         sent.find(m => m.id === personName) ||
+                         drafts.find(m => m.id === personName) ||
+                         trash.find(m => m.id === personName);
+
+            if (!mail) {
+                // si no existe objeto JS, puede que exista un person div (id igual) en DOM
+                const personDiv = document.getElementById(personName);
+                if (personDiv) {
+                    personDiv.style.display = "block";
+                    return;
+                } else {
+                    detail.innerHTML = '<p class="w3-padding">Message not found.</p>';
+                    return;
+                }
+            }
+
+            // Si encontramos el mail en los arrays, renderizamos en mailDetail
+            const isInTrash = trash.some(m => m.id === personName);
+            const container = document.createElement("div");
+            container.className = "w3-container";
+            container.innerHTML = `
+                <br>
+                <img class="w3-round w3-animate-top" src="${mail.avatar || 'https://www.w3schools.com/w3images/avatar2.png'}" style="width:20%;">
+                <h5 class="w3-opacity">Subject: ${mail.subject || "None"}</h5>
+                <h4><i class="fa fa-clock-o"></i> From ${mail.from || mail.to || "Unknown"}, ${mail.date || ""}.</h4>
+                <div class="w3-section">
+                    <button class="w3-button w3-light-grey" onclick="replyMail('${mail.id}')">Reply<i class="w3-margin-left fa fa-mail-reply"></i></button>
+                    <button class="w3-button w3-light-grey" onclick="forwardMail('${mail.id}')">Forward<i class="w3-margin-left fa fa-arrow-right"></i></button>
+                `;
+            // add Delete or Restore depending on folder
+            if (isInTrash) {
+                container.innerHTML += `<button class="w3-button w3-right w3-light-grey" onclick="restoreMail('${mail.id}')">Restore <i class="fa fa-reply"></i></button>`;
+            } else {
+                container.innerHTML += `<button class="w3-button w3-right w3-light-grey" onclick="deleteMail('${mail.id}')">Delete <i class="fa fa-trash"></i></button>`;
+            }
+            container.innerHTML += `</div><hr><p>${mail.content || ""}</p>`;
+
+            detail.appendChild(container);
+            // Ensure the view shows the detail area (folder views hidden by openFolder logic)
+            // We keep folder views as they are; mailDetail sits above them and shows the selected message.
+        }
+
+        /* ==================== Contadores ==================== */
+        function updateCounts() {
+            const inboxC = document.querySelector(".inbox-count");
+            const sentC = document.querySelector(".sent-count");
+            const draftC = document.querySelector(".draft-count");
+            const trashC = document.querySelector(".trash-count");
+            if (inboxC) inboxC.textContent = `(${inbox.length})`;
+            if (sentC) sentC.textContent = `(${sent.length})`;
+            if (draftC) draftC.textContent = `(${drafts.length})`;
+            if (trashC) trashC.textContent = `(${trash.length})`;
+        }
+
+        /* ==================== OPERACIONES: delete / restore etc. ==================== */
+        function deleteMail(id) {
+            let mail =
+                inbox.find(m => m.id === id) ||
+                sent.find(m => m.id === id) ||
+                drafts.find(m => m.id === id);
+            if (!mail) return;
+            // remove from wherever it was
+            inbox = inbox.filter(m => m.id !== id);
+            sent = sent.filter(m => m.id !== id);
+            drafts = drafts.filter(m => m.id !== id);
+            // add to top of trash (most recent first)
+            trash.unshift(mail);
+            // re-render sidebar + counts
+            renderMailLists();
+            updateCounts();
+            // open Trash folder and show the deleted mail
+            openFolder("Trash");
+            // highlight deleted item in trash list and open it
+            setTimeout(() => {
+                const item = document.querySelector(`#TrashList a[data-mail-id="${id}"]`);
+                if (item) {
+                    item.className += " w3-light-grey";
+                    item.click();
+                } else {
+                    // fallback: render detail directly
+                    openMail(id);
+                }
+            }, 100);
+        }
+
+        function restoreMail(id) {
+            const idx = trash.findIndex(m => m.id === id);
+            if (idx === -1) return;
+            const mail = trash.splice(idx, 1)[0];
+            inbox.unshift(mail);
+            renderMailLists();
+            updateCounts();
+            openFolder("Inbox");
+            // open restored message
+            setTimeout(() => {
+                const item = document.querySelector(`#InboxList a[data-mail-id="${id}"]`);
+                if (item) {
+                    item.className += " w3-light-grey";
+                    item.click();
+                } else {
+                    openMail(id);
+                }
+            }, 100);
+        }
+
+        /* ==================== Modal actions (reply/forward/send/save) ==================== */
+        function replyMail(id) {
+            const mail = inbox.find(m => m.id === id) ||
+                         sent.find(m => m.id === id) ||
+                         drafts.find(m => m.id === id) ||
+                         trash.find(m => m.id === id);
+            if (!mail) return;
+            document.getElementById('id01').style.display = 'block';
+            document.getElementById('toInput').value = mail.from || mail.to || "";
+            // we keep fromInput but not required
+            document.getElementById('fromInput').value = "";
+            document.getElementById('subjectInput').value = "Re: " + (mail.subject || "");
+            document.getElementById('bodyInput').value = "\n\n--- Original Message ---\nFrom: " + (mail.from || mail.to) + "\nDate: " + (mail.date || "") + "\n\n" + (mail.content || "");
+        }
+
+        function forwardMail(id) {
+            const mail = inbox.find(m => m.id === id) ||
+                         sent.find(m => m.id === id) ||
+                         drafts.find(m => m.id === id) ||
+                         trash.find(m => m.id === id);
+            if (!mail) return;
+            document.getElementById('id01').style.display = 'block';
+            document.getElementById('toInput').value = "";
+            document.getElementById('fromInput').value = "";
+            document.getElementById('subjectInput').value = "Fwd: " + (mail.subject || "");
+            document.getElementById('bodyInput').value = "\n\n--- Forwarded Message ---\nFrom: " + (mail.from || mail.to) + "\nDate: " + (mail.date || "") + "\n\n" + (mail.content || "");
+        }
+
+        function sendMail() {
+            const to = document.getElementById('toInput').value.trim();
+            const subject = document.getElementById('subjectInput').value.trim();
+            const body = document.getElementById('bodyInput').value.trim();
+            if (!to && !subject && !body) return alert("Empty message.");
+            const newMail = { id: "sent_" + Date.now(), to, subject, content: body, date: new Date().toLocaleString(), avatar: "https://www.w3schools.com/w3images/avatar2.png" };
+            sent.unshift(newMail);
+            document.getElementById('id01').style.display = 'none';
+            renderMailLists();
+            updateCounts();
+            // show Sent folder
+            openFolder("Sent");
+            // open first sent if exists
+            setTimeout(()=> {
+                const item = document.querySelector(`#SentList a[data-mail-id="${newMail.id}"]`);
+                if (item) item.click();
+            },100);
+        }
+
+        function saveDraft() {
+            const to = document.getElementById('toInput').value.trim();
+            const subject = document.getElementById('subjectInput').value.trim();
+            const body = document.getElementById('bodyInput').value.trim();
+            if (!subject && !body) return alert("Nothing to save.");
+            const draftMail = { id: "draft_" + Date.now(), to, subject, content: body, date: new Date().toLocaleString(), avatar: "https://www.w3schools.com/w3images/avatar2.png" };
+            drafts.unshift(draftMail);
+            document.getElementById('id01').style.display = 'none';
+            renderMailLists();
+            updateCounts();
+            openFolder("Drafts");
+            setTimeout(()=> {
+                const item = document.querySelector(`#DraftList a[data-mail-id="${draftMail.id}"]`);
+                if (item) item.click();
+            },100);
+        }
+
+        function cancelModal() {
+            document.getElementById('id01').style.display = 'none';
+        }
+
+        /* ==================== Cambio de vista (carpetas) ==================== */
+        function openFolder(folder) {
+            document.querySelectorAll(".folder-view").forEach(f => f.style.display = "none");
+            const section = document.getElementById(folder);
+            if (section) section.style.display = "block";
+            // clear mailDetail when switching folder to avoid confusion
+            // (we keep it visible until a mail is selected)
+            //document.getElementById("mailDetail").innerHTML = "";
+        }
+
+        /* ==================== Inicialización ==================== */
+        document.addEventListener("DOMContentLoaded", function () {
+            // bind sidebar folder links (open folder on click)
+            const inboxLink = document.querySelector(".inbox-link");
+            const sentLink = document.querySelector(".sent-link");
+            const draftLink = document.querySelector(".draft-link");
+            const trashLink = document.querySelector(".trash-link");
+
+            if (inboxLink) inboxLink.onclick = () => { openFolder("Inbox"); toggleFolder('InboxList', document.getElementById('inboxBtn')); };
+            if (sentLink) sentLink.onclick = () => { openFolder("Sent"); toggleFolder('SentList', document.getElementById('sentBtn')); };
+            if (draftLink) draftLink.onclick = () => { openFolder("Drafts"); toggleFolder('DraftList', document.getElementById('draftBtn')); };
+            if (trashLink) trashLink.onclick = () => { openFolder("Trash"); toggleFolder('TrashList', document.getElementById('trashBtn')); };
+
+            // modal buttons
+            const sendBtn = document.getElementById("sendBtn");
+            const saveDraftBtn = document.getElementById("saveDraftBtn");
+            const cancelBtn = document.getElementById("cancelBtn");
+
+            if (sendBtn) sendBtn.onclick = sendMail;
+            if (saveDraftBtn) saveDraftBtn.onclick = saveDraft;
+            if (cancelBtn) cancelBtn.onclick = cancelModal;
+
+            // initial render
+            renderMailLists();
+            updateCounts();
+            openFolder("Inbox");
+
+            // auto-open first inbox item visually if exists
+            setTimeout(() => {
+                const first = document.querySelector("#InboxList a.test");
+                if (first) {
+                    first.className += " w3-light-grey";
+                    first.click();
+                } else {
+                    // fallback: try existing static person div
+                    const p = document.getElementById(inbox[0] ? inbox[0].id : 'Borge');
+                    if (p) p.style.display = 'block';
+                }
+            }, 120);
+        });
+    </script>
+
+</body>
+
+</html>
