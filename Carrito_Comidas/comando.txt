@@ -1,0 +1,22 @@
+$salida = "proyecto_texto.txt"
+if (Test-Path $salida) { Remove-Item $salida }
+
+"===== HTML =====" | Out-File $salida -Encoding utf8
+Get-ChildItem -Recurse -Filter *.html | Sort-Object FullName | ForEach-Object {
+    "----- $($_.FullName) -----" | Out-File $salida -Append
+    Get-Content $_.FullName -Encoding utf8 | Out-File $salida -Append
+}
+
+"===== CSS =====" | Out-File $salida -Append -Encoding utf8
+Get-ChildItem -Recurse -Filter *.css | Sort-Object FullName | ForEach-Object {
+    "----- $($_.FullName) -----" | Out-File $salida -Append
+    Get-Content $_.FullName -Encoding utf8 | Out-File $salida -Append
+}
+
+"===== JS =====" | Out-File $salida -Append -Encoding utf8
+Get-ChildItem -Recurse -Filter *.js | Sort-Object FullName | ForEach-Object {
+    "----- $($_.FullName) -----" | Out-File $salida -Append
+    Get-Content $_.FullName -Encoding utf8 | Out-File $salida -Append
+}
+
+Write-Host "✅ Archivo generado: $salida"
