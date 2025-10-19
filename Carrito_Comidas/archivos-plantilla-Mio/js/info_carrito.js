@@ -120,69 +120,81 @@ export function updateCartCount(carrito = []) {
 // ===========================================================
 (function attachDeleteHandler() {
   const lista = document.getElementById('listaCarrito');
-  if (!lista) {
-    // si no existe el menú en esta página, no hacemos nada
-    return;
-  }
+  if (!lista) return; // si no existe el menú en esta página, no hacemos nada
 
-  // Delegated event listener: escucha clicks sobre botones con data-id dentro del UL#listaCarrito
   lista.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-id]');
     if (!btn) return;
 
     e.preventDefault();
-
     const idProducto = String(btn.dataset.id);
     console.log('🗑️ Click eliminar recibido para id:', idProducto);
 
-    // 1) Cargar el carrito desde la fuente única (pro_localstorage)
+    // 1️⃣ Cargar carrito actual
     let carrito = loadCarrito() || [];
     console.log('📥 Carrito antes de eliminar (from loadCarrito):', carrito);
 
-    // 2) Verificar existencia y filtrar solo ese id
+    // 2️⃣ Validar existencia
     if (!carrito.some(p => String(p.id) === idProducto)) {
       console.warn('⚠️ Intento de eliminar id que no existe en carrito:', idProducto);
       return;
     }
 
+    // 3️⃣ Filtrar y actualizar memoria + almacenamiento
     const nuevoCarrito = carrito.filter(p => String(p.id) !== idProducto);
 
-    // 3) Guardar utilizando la API consistente del proyecto
+    // 🔹 Actualizar la referencia global antes de guardar
+    window.carrito = nuevoCarrito;
+
     try {
-      // preferimos la función exportada saveCarrito si existe
       saveCarrito(nuevoCarrito);
     } catch (err) {
-      // fallback a localStorage directo (mínima interferencia)
       localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
-      console.warn('⚠️ saveCarrito falló, se utilizó localStorage directamente:', err);
+      console.warn('⚠️ saveCarrito falló, se usó localStorage directamente:', err);
     }
 
-    // Si tienes una función extra que sincroniza (guardarCarritoLS), la llamamos
-    try { if (typeof guardarCarritoLS === 'function') guardarCarritoLS(); } catch(e) { /* no crítico */ }
-
-    // 4) Re-render con los datos exactos que acabamos de guardar
+    // 🔹 Ahora sí sincronizamos el LS
     try {
+      if (typeof guardarCarritoLS === 'function') guardarCarritoLS();
+    } catch (e) {
+      console.warn('⚠️ guardarCarritoLS no disponible:', e);
+    }
+
+    // 4️⃣ Forzamos re-render asincrónico para asegurar que el LS se actualizó
+    Promise.resolve().then(() => {
       renderCartDropdown(nuevoCarrito);
       renderCartTable(nuevoCarrito);
       updateCartCount(nuevoCarrito);
-    } catch (e) {
-      console.warn('⚠️ Error al re-renderizar después de eliminar:', e);
-    }
-
-    // 5) Recalcular el resumen (usa tu módulo)
-    try {
       calcularResumen();
-    } catch (e) {
-      // en caso de que calcularResumen no esté disponible por carga de módulos
-      console.warn('⚠️ No se pudo ejecutar calcularResumen():', e);
-    }
 
-    // 6) emitir evento para que otros módulos/suscriptores sepan del cambio
-    document.dispatchEvent(new CustomEvent('actualizarCarrito', { detail: { carrito: nuevoCarrito } }));
-
-    console.log(`✅ Producto ${idProducto} eliminado. Nuevo carrito:`, nuevoCarrito);
+      document.dispatchEvent(new CustomEvent('actualizarCarrito', { detail: { carrito: nuevoCarrito } }));
+      console.log(`✅ Producto ${idProducto} eliminado. Nuevo carrito:`, nuevoCarrito);
+    });
   });
 })();
+
+// ===========================================================
+// 🔹 Escucha global para refrescar tabla y menú en tiempo real
+// ===========================================================
+document.addEventListener("actualizarCarrito", (e) => {
+  const carritoActualizado = e.detail?.carrito || JSON.parse(localStorage.getItem("carrito")) || [];
+  console.log("♻️ Evento actualizarCarrito recibido. Refrescando tabla y menú con:", carritoActualizado);
+
+  try {
+    renderCartDropdown(carritoActualizado);
+    renderCartTable(carritoActualizado);
+    updateCartCount(carritoActualizado);
+  } catch (err) {
+    console.error("⚠️ Error refrescando después de actualización:", err);
+  }
+
+  // También recalcula el resumen
+  try {
+    import("./resumen_compra.js").then(mod => mod.calcularResumen());
+  } catch (e) {
+    console.warn("⚠️ No se pudo recalcular resumen al refrescar:", e);
+  }
+});
 
 
 // ===========================================================
