@@ -1,24 +1,15 @@
 // ===================== resumen_compra.js =====================
 import { loadCarrito, saveResumen } from './pro_localstorage.js';
-
 console.log('resumen-compra cargado');
 
-// Configuración de promociones
 const PROMO_UMBRAL = 100000;
 const PROMO_PORC = 0.10;
 
-// ===========================================================
-// 🔹 Calcula el resumen de la compra (subtotal, descuento, total)
-// ===========================================================
 export function calcularResumen() {
-  const carrito = loadCarrito() || [];
-  const subtotal = carrito.reduce((sum, p) => sum + (Number(p.precio || 0) * Number(p.cantidad || 0)), 0);
-
-  // Descuento promocional si aplica
+  const carrito = loadCarrito();
+  const subtotal = carrito.reduce((s, p) => s + (Number(p.precio || 0) * Number(p.cantidad || 0)), 0);
   const descuento = subtotal >= PROMO_UMBRAL ? Math.round(subtotal * PROMO_PORC) : 0;
   const total = subtotal - descuento;
-
-  // Crear objeto resumen
   const resumen = {
     subtotal,
     descuento,
@@ -27,33 +18,59 @@ export function calcularResumen() {
     cantidadProductos: carrito.reduce((s, p) => s + (p.cantidad || 0), 0)
   };
 
-  // Guardar en localStorage
   try {
     saveResumen(resumen);
+    console.log("💾 Resumen actualizado y guardado en localStorage:", resumen);
   } catch (e) {
     localStorage.setItem('pro-resumen', JSON.stringify(resumen));
   }
 
-  // Actualizar elementos del DOM
+  actualizarUIResumen(resumen);
+  return resumen;
+}
+
+// ===========================================================
+// 🔹 Actualiza los elementos visuales de resumen
+// ===========================================================
+function actualizarUIResumen({ subtotal, descuento, total }) {
   const subEl = document.querySelector('.res-sub-total');
   const descEl = document.querySelector('.promo');
   const totEl = document.querySelector('.total');
 
   if (subEl) subEl.textContent = `$${subtotal.toLocaleString()}`;
-  if (descEl) descEl.textContent = descuento > 0 ? `-$${descuento.toLocaleString()}` : '$0';
+  if (descEl) descEl.textContent = `$${descuento.toLocaleString()}`;
   if (totEl) totEl.textContent = `$${total.toLocaleString()}`;
-
-  console.log('💾 Resumen actualizado y guardado en localStorage:', resumen);
-  return resumen;
 }
 
 // ===========================================================
-// 🔹 Inicialización automática al cargar el DOM
+// 🔹 Escucha cambios del selector de destino
 // ===========================================================
 document.addEventListener('DOMContentLoaded', () => {
-  try {
-    calcularResumen();
-  } catch (e) {
-    console.error('❌ Error al calcular resumen:', e);
+  const selectDestino = document.querySelector('.destino');
+  const valorDomi = document.querySelector('.valor-domi');
+
+  if (selectDestino && valorDomi) {
+    selectDestino.addEventListener('change', () => {
+      const texto = selectDestino.options[selectDestino.selectedIndex].text;
+      const match = texto.match(/\$(\d+(?:\.\d+)?)/);
+      const costo = match ? parseFloat(match[1].replace('.', '')) : 0;
+
+      valorDomi.textContent = `$${costo.toLocaleString()}`;
+
+      const resumen = calcularResumen();
+      const totalFinal = resumen.total + costo;
+      document.querySelector('.total').textContent = `$${totalFinal.toLocaleString()}`;
+    });
+  }
+
+  // Botón Ir a pagar
+  const btnPagar = document.querySelector('.btn-resumen');
+  if (btnPagar) {
+    btnPagar.addEventListener('click', () => {
+      const resumenActual = calcularResumen();
+      localStorage.setItem('pro-resumen', JSON.stringify(resumenActual));
+      console.log("✅ Resumen guardado antes del checkout:", resumenActual);
+      window.location.href = 'checkout.html';
+    });
   }
 });
