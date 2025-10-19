@@ -11,7 +11,6 @@ function ensureWindowCarrito(){
   }
 }
 
-// Agrega 1 unidad del producto (obj: {id,nombre,precio})
 export function agregarAlCarrito(producto){
   ensureWindowCarrito();
   const idx = window.carrito.findIndex(p => p.id === producto.id);
@@ -20,12 +19,18 @@ export function agregarAlCarrito(producto){
   } else {
     window.carrito.push({...producto, cantidad: 1});
   }
+
   saveCarrito(window.carrito);
   guardarCarritoLS();
-  renderCartDropdown();
-  renderCartTable();
-  updateCartCount();
+
+  // ✅ CAMBIO AQUÍ: pasar el carrito actualizado como argumento
+  renderCartDropdown(window.carrito);
+  renderCartTable(window.carrito);
+  updateCartCount(window.carrito);
+
   calcularResumen();
+
+  console.log(`🛒 Producto agregado: ${producto.nombre}`);
 }
 
 // Inicializa listeners en botones (soporta varias formas)
@@ -64,3 +69,17 @@ export function vaciarCarrito(){
 }
 
 // export default no usado
+// ======================= Inicialización =======================
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    initAddButtons();          // ✅ activa los botones agregar
+    renderCartDropdown();      // actualiza menú desplegable
+    updateCartCount();         // actualiza contador
+    renderCartTable();         // actualiza tabla si existe
+    calcularResumen();         // actualiza subtotal y totales
+
+    console.log("🧩 pro_carrito inicializado correctamente.");
+  } catch (e) {
+    console.error("❌ Error al inicializar pro_carrito:", e);
+  }
+});
