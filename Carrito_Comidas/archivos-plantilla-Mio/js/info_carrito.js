@@ -1,3 +1,6 @@
+import { loadCarrito, saveCarrito, guardarCarritoLS } from './pro_localstorage.js';
+import { calcularResumen } from './resumen_compra.js';
+
 // info-carrito.js
 
 // ===================== info_carrito.js =====================
@@ -111,6 +114,76 @@ export function updateCartCount(carrito = []) {
   const total = carrito.reduce((acc, p) => acc + Number(p.cantidad || 0), 0);
   contador.textContent = total;
 }
+
+// ===========================================================
+// 🔹 Eliminación robusta desde el menú desplegable (#listaCarrito)
+// ===========================================================
+(function attachDeleteHandler() {
+  const lista = document.getElementById('listaCarrito');
+  if (!lista) {
+    // si no existe el menú en esta página, no hacemos nada
+    return;
+  }
+
+  // Delegated event listener: escucha clicks sobre botones con data-id dentro del UL#listaCarrito
+  lista.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-id]');
+    if (!btn) return;
+
+    e.preventDefault();
+
+    const idProducto = String(btn.dataset.id);
+    console.log('🗑️ Click eliminar recibido para id:', idProducto);
+
+    // 1) Cargar el carrito desde la fuente única (pro_localstorage)
+    let carrito = loadCarrito() || [];
+    console.log('📥 Carrito antes de eliminar (from loadCarrito):', carrito);
+
+    // 2) Verificar existencia y filtrar solo ese id
+    if (!carrito.some(p => String(p.id) === idProducto)) {
+      console.warn('⚠️ Intento de eliminar id que no existe en carrito:', idProducto);
+      return;
+    }
+
+    const nuevoCarrito = carrito.filter(p => String(p.id) !== idProducto);
+
+    // 3) Guardar utilizando la API consistente del proyecto
+    try {
+      // preferimos la función exportada saveCarrito si existe
+      saveCarrito(nuevoCarrito);
+    } catch (err) {
+      // fallback a localStorage directo (mínima interferencia)
+      localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
+      console.warn('⚠️ saveCarrito falló, se utilizó localStorage directamente:', err);
+    }
+
+    // Si tienes una función extra que sincroniza (guardarCarritoLS), la llamamos
+    try { if (typeof guardarCarritoLS === 'function') guardarCarritoLS(); } catch(e) { /* no crítico */ }
+
+    // 4) Re-render con los datos exactos que acabamos de guardar
+    try {
+      renderCartDropdown(nuevoCarrito);
+      renderCartTable(nuevoCarrito);
+      updateCartCount(nuevoCarrito);
+    } catch (e) {
+      console.warn('⚠️ Error al re-renderizar después de eliminar:', e);
+    }
+
+    // 5) Recalcular el resumen (usa tu módulo)
+    try {
+      calcularResumen();
+    } catch (e) {
+      // en caso de que calcularResumen no esté disponible por carga de módulos
+      console.warn('⚠️ No se pudo ejecutar calcularResumen():', e);
+    }
+
+    // 6) emitir evento para que otros módulos/suscriptores sepan del cambio
+    document.dispatchEvent(new CustomEvent('actualizarCarrito', { detail: { carrito: nuevoCarrito } }));
+
+    console.log(`✅ Producto ${idProducto} eliminado. Nuevo carrito:`, nuevoCarrito);
+  });
+})();
+
 
 // ===========================================================
 // 🔹 Inicialización automática (si el carrito está en localStorage)
