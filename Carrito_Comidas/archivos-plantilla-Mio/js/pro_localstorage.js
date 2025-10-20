@@ -1,5 +1,5 @@
 // ======================================================
-// 📦 pro-localstorage.js  —  Gestión del almacenamiento
+// pro-localstorage.js  —  Gestión del almacenamiento
 // ======================================================
 
 export const LS_KEYS = {
@@ -33,7 +33,7 @@ export function loadResumen() {
 }
 
 // ----------------------
-// 🔹 Registro de compras históricas
+// Registro de compras históricas
 // ----------------------
 export function pushCompra(compra) {
   const arr = (JSON.parse(localStorage.getItem(LS_KEYS.COMPRAS)) || []);
@@ -47,7 +47,7 @@ export function loadCompras() {
 }
 
 // ----------------------
-// 🔹 Limpieza de datos
+// Limpieza de datos
 // ----------------------
 export function clearAll() {
   localStorage.removeItem(LS_KEYS.CARRITO);
@@ -56,14 +56,14 @@ export function clearAll() {
 }
 
 // ======================================================
-// 🔄 Compatibilidad con import del HTML
+// Compatibilidad con import del HTML
 // ======================================================
 
 // Sincroniza el carrito entre localStorage y variable global
 export function sincronizarCarritoLS() {
   const carrito = loadCarrito();
   window.carrito = carrito;
-  console.log("🔁 Carrito sincronizado desde localStorage:", carrito);
+  console.log("Carrito sincronizado desde localStorage:", carrito);
   return carrito;
 }
 
@@ -71,6 +71,6 @@ export function sincronizarCarritoLS() {
 export function guardarCarritoLS() {
   if (window.carrito && Array.isArray(window.carrito)) {
     saveCarrito(window.carrito);
-    console.log("💾 Carrito guardado nuevamente en localStorage.");
+    console.log("Carrito guardado nuevamente en localStorage.");
   }
 }

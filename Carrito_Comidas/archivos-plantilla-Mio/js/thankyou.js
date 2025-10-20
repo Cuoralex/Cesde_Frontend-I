@@ -1,10 +1,10 @@
 // ===========================================================
-// 🔹 Mostrar información del pedido en thankyou.html
+// Mostrar información del pedido en thankyou.html
 // ===========================================================
 document.addEventListener('DOMContentLoaded', () => {
   const resumen = JSON.parse(localStorage.getItem('resumenFinal') || '{}');
   if (!resumen || !resumen.cliente) {
-    alert('⚠️ No hay datos de compra registrados.');
+    alert('No hay datos de compra registrados.');
     window.location.href = 'index.html';
     return;
   }

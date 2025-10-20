@@ -15,7 +15,7 @@ import { calcularResumen } from "./resumen_compra.js";
 
 // ------------------ Render tabla ------------------
 export function renderCartTable(carrito = []) {
-  console.log("🧾 Renderizando tabla del carrito...");
+  console.log("Renderizando tabla del carrito...");
   const tbody =
     document.querySelector(".cart-table tbody") ||
     document.querySelector(".list-cart tbody") ||
@@ -23,7 +23,7 @@ export function renderCartTable(carrito = []) {
     document.querySelector("table tbody");
 
   if (!tbody) {
-    console.warn("⚠️ No se encontró <tbody> para renderizar los productos del carrito.");
+    console.warn("No se encontró <tbody> para renderizar los productos del carrito.");
     return;
   }
 
@@ -34,7 +34,7 @@ export function renderCartTable(carrito = []) {
       <tr>
         <td colspan="4" class="text-center text-muted py-4">🛒 Tu carrito está vacío</td>
       </tr>`;
-    console.log("🧾 Tabla renderizada: carrito vacío");
+    console.log("Tabla renderizada: carrito vacío");
     return;
   }
 
@@ -63,7 +63,7 @@ export function renderCartTable(carrito = []) {
     tbody.appendChild(fila);
   });
 
-  console.log(`✅ Tabla renderizada con ${carrito.length} productos.`);
+  console.log(`Tabla renderizada con ${carrito.length} productos.`);
 }
 
 // ------------------ Render dropdown ------------------
@@ -144,10 +144,10 @@ document.addEventListener("click", (e) => {
   // ELIMINAR
   if (btnEliminar) {
     const id = String(btnEliminar.dataset.id);
-    console.log("🗑️ Click eliminar recibido para id:", id);
+    console.log("Click eliminar recibido para id:", id);
 
     if (!carrito.some(p => String(p.id) === id)) {
-      console.warn("⚠️ id no encontrado para eliminar:", id);
+      console.warn("id no encontrado para eliminar:", id);
       return;
     }
 
@@ -161,7 +161,7 @@ document.addEventListener("click", (e) => {
     try { calcularResumen(); } catch(e){/*fallback*/}
 
     document.dispatchEvent(new CustomEvent("actualizarCarrito", { detail: { carrito: nuevo } }));
-    console.log("✅ Producto eliminado. Items restantes:", nuevo.length);
+    console.log("Producto eliminado. Items restantes:", nuevo.length);
     return;
   }
 
@@ -170,7 +170,7 @@ document.addEventListener("click", (e) => {
   const id = String(btn.dataset.id);
   const idx = carrito.findIndex(p => String(p.id) === id);
   if (idx === -1) {
-    console.warn("⚠️ Producto no encontrado para +/-:", id);
+    console.warn("Producto no encontrado para +/-:", id);
     return;
   }
 
@@ -191,7 +191,7 @@ document.addEventListener("click", (e) => {
   try { calcularResumen(); } catch(e){/*fallback*/}
 
   document.dispatchEvent(new CustomEvent("actualizarCarrito", { detail: { carrito } }));
-  console.log(`♻️ Cantidad actualizada para ${id}. Nuevo carrito:`, carrito);
+  console.log(`Cantidad actualizada para ${id}. Nuevo carrito:`, carrito);
 });
 
 // ------------------ Evento externo para refrescar (si otro módulo emite) ------------------
@@ -205,7 +205,7 @@ document.addEventListener("actualizarCarrito", (e) => {
     updateCartCount(carritoActualizado);
     try { calcularResumen(); } catch(e){}
   } catch (err) {
-    console.error("⚠️ Error refrescando tras evento actualizarCarrito:", err);
+    console.error("Error refrescando tras evento actualizarCarrito:", err);
   }
 });
 
@@ -219,6 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
     try { calcularResumen(); } catch(e){}
     console.log("info_carrito inicializado con datos del localStorage:", carrito);
   } catch (e) {
-    console.error("❌ Error inicializando info_carrito:", e);
+    console.error("Error inicializando info_carrito:", e);
   }
 });

@@ -1,5 +1,5 @@
 // ==========================================================
-// ✅ checkout.js — Integración checkout + carrito + resumen
+// checkout.js — Integración checkout + carrito + resumen
 // ==========================================================
 import { loadCarrito, saveCarrito } from './pro_localstorage.js';
 import { calcularResumen } from './resumen_compra.js';
@@ -7,8 +7,13 @@ import { renderCartDropdown } from './info_carrito.js';
 
 console.log("checkout.js cargado correctamente 🧾");
 
+function formatoCOP(valor) {
+  return valor.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+}
+
+
 // ===========================================================
-// 🔹 Manejo del resumen y métodos de pago en checkout
+// Manejo del resumen y métodos de pago en checkout
 // ===========================================================
 document.addEventListener('DOMContentLoaded', () => {
   const subEl = document.querySelector('.res-sub-total');
@@ -16,17 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const radiosPago = document.querySelectorAll('input[name="radio"]'); // según tu HTML
   const btnConfirmar = document.querySelector('.btn-confirmar'); // botón de confirmar o finalizar
 
-  // 🔹 Cargar el resumen guardado desde el paso anterior
+  // Cargar el resumen guardado desde el paso anterior
   let resumen = JSON.parse(localStorage.getItem('resumenFinal') || '{}');
 
-  // 🔸 Mostrar subtotal inicial
-  if (subEl) subEl.textContent = `$${(resumen.subtotal || 0).toLocaleString()}`;
+  // Mostrar subtotal inicial
+  if (subEl) subEl.textContent = formatoCOP(resumen.subtotal);
 
-  // 🔸 Mostrar total inicial (con domicilio si existe)
-  if (totEl) totEl.textContent = `$${(resumen.total || 0).toLocaleString()}`;
+  // Mostrar total inicial (con domicilio si existe)
+  if (totEl) totEl.textContent = formatoCOP(resumen.total || 0);
+
 
   // ===========================================================
-  // 🔹 Escuchar cambios en los radios de método de pago
+  // Escuchar cambios en los radios de método de pago
   // ===========================================================
   radiosPago.forEach((radio) => {
     radio.addEventListener('change', () => {
@@ -49,16 +55,16 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
       }
 
-      // 🔸 Calcular nuevo total
+      // Calcular nuevo total
       const subtotal = resumen.subtotal || 0;
       const valorDomi = resumen.valorDomicilio || 0;
       const baseTotal = subtotal - (resumen.descuento || 0) + valorDomi;
       const totalConRecargo = Math.round(baseTotal * (1 + recargo));
 
-      // 🔸 Actualizar DOM
+      // Actualizar DOM
       if (totEl) totEl.textContent = `$${totalConRecargo.toLocaleString()}`;
 
-      // 💾 Actualizar localStorage sin perder campos anteriores
+      // Actualizar localStorage sin perder campos anteriores
       const resumenActualizado = {
         ...resumen,
         metodoPago: metodo,
@@ -69,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('resumenFinal', JSON.stringify(resumenActualizado));
       resumen = resumenActualizado;
 
-      console.log("💾 Resumen actualizado con método de pago:", resumenActualizado);
+      console.log("Resumen actualizado con método de pago:", resumenActualizado);
     });
   });
 
@@ -79,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnConfirmar) {
     btnConfirmar.addEventListener('click', () => {
       const resumenFinal = JSON.parse(localStorage.getItem('resumenFinal') || '{}');
-      console.log("✅ Resumen final listo para envío:", resumenFinal);
+      console.log("Resumen final listo para envío:", resumenFinal);
 
       alert(`Pago confirmado con ${resumenFinal.metodoPago || 'N/A'}.\nTotal final: $${resumenFinal.total.toLocaleString()}`);
       // Aquí puedes hacer tu post al backend o redirección final
@@ -88,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===========================================================
-// 🔹 Validación de formulario antes de finalizar compra
+// Validación de formulario antes de finalizar compra
 // ===========================================================
 document.addEventListener('DOMContentLoaded', () => {
   const btnCheckout = document.querySelector('.btn-checkout');
@@ -113,14 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (faltantes.length > 0) {
       alert(
-        `⚠️ Los siguientes campos son obligatorios:\n\n${faltantes.join(
+        `Los siguientes campos son obligatorios:\n\n${faltantes.join(
           ', '
         )}\n\nPor favor diligéncialos para continuar.`
       );
       return;
     }
 
-    // ✅ Si todo está diligenciado correctamente
+    // Si todo está diligenciado correctamente
     const datosCliente = {
       nombres: campos.nombres.value.trim(),
       apellidos: campos.apellidos.value.trim(),
@@ -140,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     localStorage.setItem('resumenFinal', JSON.stringify(resumenConCliente));
-    console.log('💾 Compra confirmada y guardada:', resumenConCliente);
+    console.log('Compra confirmada y guardada:', resumenConCliente);
 
     // 🔸 Redirigir a página de agradecimiento
     window.location.href = 'thankyou.html';
@@ -253,7 +259,7 @@ function cargarResumenDesdeCart() {
   if (subEl) subEl.textContent = `$${subtotal.toLocaleString()}`;
   if (domiEl) domiEl.textContent = `$${valorDomicilio.toLocaleString()}`;
   if (promoEl) promoEl.textContent = `$${descuento.toLocaleString()}`;
-  if (totalEl) totalEl.textContent = `$${total.toLocaleString()}`;
+  if (totalEl) totalEl.textContent = total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
   if (destinoEl) destinoEl.textContent = destino;
 
   console.log("✅ Resumen mostrado en checkout:", {
@@ -289,7 +295,7 @@ function calcularTotales() {
   valorDomiEl.textContent = `$${valorEnvio.toLocaleString()}`;
   promoEl.textContent = `-$${descuento.toLocaleString()}`;
   subEl.textContent = `$${subtotal.toLocaleString()}`;
-  totalEl.textContent = `$${total.toLocaleString()}`;
+  totalEl.textContent = total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
 
   // Actualiza localStorage (para coherencia entre pantallas)
   calcularResumen();

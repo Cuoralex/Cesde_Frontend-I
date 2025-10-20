@@ -23,14 +23,14 @@ export function agregarAlCarrito(producto){
   saveCarrito(window.carrito);
   guardarCarritoLS();
 
-  // ✅ CAMBIO AQUÍ: pasar el carrito actualizado como argumento
+  // CAMBIO AQUÍ: pasar el carrito actualizado como argumento
   renderCartDropdown(window.carrito);
   renderCartTable(window.carrito);
   updateCartCount(window.carrito);
 
   calcularResumen();
 
-  console.log(`🛒 Producto agregado: ${producto.nombre}`);
+  console.log(`Producto agregado: ${producto.nombre}`);
 }
 
 // Inicializa listeners en botones (soporta varias formas)
@@ -72,14 +72,14 @@ export function vaciarCarrito(){
 // ======================= Inicialización =======================
 document.addEventListener('DOMContentLoaded', () => {
   try {
-    initAddButtons();          // ✅ activa los botones agregar
+    initAddButtons();          // activa los botones agregar
     renderCartDropdown();      // actualiza menú desplegable
     updateCartCount();         // actualiza contador
     renderCartTable();         // actualiza tabla si existe
     calcularResumen();         // actualiza subtotal y totales
 
-    console.log("🧩 pro_carrito inicializado correctamente.");
+    console.log("pro_carrito inicializado correctamente.");
   } catch (e) {
-    console.error("❌ Error al inicializar pro_carrito:", e);
+    console.error("Error al inicializar pro_carrito:", e);
   }
 });
