@@ -8,32 +8,143 @@ import { renderCartDropdown } from './info_carrito.js';
 console.log("checkout.js cargado correctamente 🧾");
 
 // ===========================================================
-// 📦 Cargar resumen guardado desde cart.html
+// 🔹 Manejo del resumen y métodos de pago en checkout
 // ===========================================================
-document.addEventListener("DOMContentLoaded", () => {
-  const resumenPrevio = JSON.parse(localStorage.getItem('pro-resumen') || '{}');
+document.addEventListener('DOMContentLoaded', () => {
+  const subEl = document.querySelector('.res-sub-total');
+  const totEl = document.querySelector('.total');
+  const radiosPago = document.querySelectorAll('input[name="radio"]'); // según tu HTML
+  const btnConfirmar = document.querySelector('.btn-confirmar'); // botón de confirmar o finalizar
 
+  // 🔹 Cargar el resumen guardado desde el paso anterior
+  let resumen = JSON.parse(localStorage.getItem('resumenFinal') || '{}');
 
-  if (Object.keys(resumenPrevio).length) {
-    console.log("📦 Cargando resumen previo desde cart:", resumenPrevio);
+  // 🔸 Mostrar subtotal inicial
+  if (subEl) subEl.textContent = `$${(resumen.subtotal || 0).toLocaleString()}`;
 
-    const subEl = document.querySelector(".res-sub-total");
-    const valorDomiEl = document.querySelector(".valor-domi");
-    const promoEl = document.querySelector(".promo");
-    const totalEl = document.querySelector(".total");
-    const destinoEl = document.querySelector(".destino-select");
+  // 🔸 Mostrar total inicial (con domicilio si existe)
+  if (totEl) totEl.textContent = `$${(resumen.total || 0).toLocaleString()}`;
 
-    if (subEl) subEl.textContent = `$${resumenPrevio.subtotal.toLocaleString()}`;
-    if (valorDomiEl) valorDomiEl.textContent = `$${resumenPrevio.valorDomicilio.toLocaleString()}`;
-    if (promoEl) promoEl.textContent = `-$${resumenPrevio.descuento.toLocaleString()}`;
-    if (totalEl) totalEl.textContent = `$${resumenPrevio.total.toLocaleString()}`;
-    if (destinoEl && resumenPrevio.destino) destinoEl.value = resumenPrevio.destino;
+  // ===========================================================
+  // 🔹 Escuchar cambios en los radios de método de pago
+  // ===========================================================
+  radiosPago.forEach((radio) => {
+    radio.addEventListener('change', () => {
+      const valor = radio.value;
+      let recargo = 0;
+      let metodo = '';
+
+      switch (valor) {
+        case '1':
+          recargo = 0.05; // +5%
+          metodo = 'Contraentrega';
+          break;
+        case '2':
+          recargo = 0.03; // +3%
+          metodo = 'PSE';
+          break;
+        case '3':
+          recargo = 0; // sin recargo
+          metodo = 'Transferencia';
+          break;
+      }
+
+      // 🔸 Calcular nuevo total
+      const subtotal = resumen.subtotal || 0;
+      const valorDomi = resumen.valorDomicilio || 0;
+      const baseTotal = subtotal - (resumen.descuento || 0) + valorDomi;
+      const totalConRecargo = Math.round(baseTotal * (1 + recargo));
+
+      // 🔸 Actualizar DOM
+      if (totEl) totEl.textContent = `$${totalConRecargo.toLocaleString()}`;
+
+      // 💾 Actualizar localStorage sin perder campos anteriores
+      const resumenActualizado = {
+        ...resumen,
+        metodoPago: metodo,
+        recargoPorcentaje: recargo,
+        total: totalConRecargo,
+      };
+
+      localStorage.setItem('resumenFinal', JSON.stringify(resumenActualizado));
+      resumen = resumenActualizado;
+
+      console.log("💾 Resumen actualizado con método de pago:", resumenActualizado);
+    });
+  });
+
+  // ===========================================================
+  // 🔹 Botón Confirmar (guarda y envía resumen final)
+  // ===========================================================
+  if (btnConfirmar) {
+    btnConfirmar.addEventListener('click', () => {
+      const resumenFinal = JSON.parse(localStorage.getItem('resumenFinal') || '{}');
+      console.log("✅ Resumen final listo para envío:", resumenFinal);
+
+      alert(`Pago confirmado con ${resumenFinal.metodoPago || 'N/A'}.\nTotal final: $${resumenFinal.total.toLocaleString()}`);
+      // Aquí puedes hacer tu post al backend o redirección final
+    });
   }
+});
 
-  // Luego ejecutas tus funciones normales
-  renderCheckout();
-  initCheckoutEvents();
-  console.log("🧩 checkout inicializado correctamente.");
+// ===========================================================
+// 🔹 Validación de formulario antes de finalizar compra
+// ===========================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const btnCheckout = document.querySelector('.btn-checkout');
+
+  if (!btnCheckout) return;
+
+  btnCheckout.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    // Campos obligatorios
+    const campos = {
+      nombres: document.querySelector('#nombres-input'),
+      apellidos: document.querySelector('#apellidos-input'),
+      email: document.querySelector('#email-input'),
+      celular: document.querySelector('#celular-input'),
+      direccion: document.querySelector('#direccion-input'),
+    };
+
+    const faltantes = Object.entries(campos)
+      .filter(([_, campo]) => !campo || campo.value.trim() === '')
+      .map(([nombre]) => nombre.charAt(0).toUpperCase() + nombre.slice(1));
+
+    if (faltantes.length > 0) {
+      alert(
+        `⚠️ Los siguientes campos son obligatorios:\n\n${faltantes.join(
+          ', '
+        )}\n\nPor favor diligéncialos para continuar.`
+      );
+      return;
+    }
+
+    // ✅ Si todo está diligenciado correctamente
+    const datosCliente = {
+      nombres: campos.nombres.value.trim(),
+      apellidos: campos.apellidos.value.trim(),
+      email: campos.email.value.trim(),
+      celular: campos.celular.value.trim(),
+      direccion: campos.direccion.value.trim(),
+      direccion2: document.querySelector('#direccion-2-input')?.value.trim() || '',
+      notas: document.querySelector('#additiona-note')?.value.trim() || '',
+    };
+
+    // 🔸 Obtener resumen actual y fusionar con datos del cliente
+    const resumen = JSON.parse(localStorage.getItem('resumenFinal') || '{}');
+    const resumenConCliente = {
+      ...resumen,
+      cliente: datosCliente,
+      fechaCompra: new Date().toISOString(),
+    };
+
+    localStorage.setItem('resumenFinal', JSON.stringify(resumenConCliente));
+    console.log('💾 Compra confirmada y guardada:', resumenConCliente);
+
+    // 🔸 Redirigir a página de agradecimiento
+    window.location.href = 'thankyou.html';
+  });
 });
 
 
