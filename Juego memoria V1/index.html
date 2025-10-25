@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Memoria</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mt-3 mb-2 text-center text-danger">Juego de Memoria</h1>
+            </div>
+
+            <!-- Barra de información -->
+            <div class="col-12">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark" href="#">Jugador: <span id="jugador">Player 1</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark" href="#">Intentos: <span id="intentos">0</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark" href="#">Aciertos: <span id="aciertos">0</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark" href="#">Tiempo: <span id="tiempo">0</span>s</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark" href="#"><span id="emoji">😊</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-dark" href="#">Nivel: <span id="nivel">1</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <span id="btnIniciar" class="btn btn-success">Iniciar</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- TABLERO -->
+            <div class="col-7">
+                <h2 class="text-danger">Tablero de juego</h2>
+                <hr class="text-danger">
+                <div class="row g-3 mb-5 tablero">
+                    <!-- Las cartas se agregan dinámicamente -->
+                </div>
+            </div>
+
+            <!-- TABLA DE RECORDS -->
+            <div class="col-5">
+                <table class="table my-3 records table-striped">
+                    <thead class="table-danger">
+                        <tr>
+                            <th>#</th>
+                            <th>Jugador</th>
+                            <th>Tiempo total</th>
+                            <th>Intentos totales</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+
+    <!-- Tu script -->
+    <script src="guardarDatos.js"></script>
+    <script src="funciones.js"></script>
+</body>
+</html>

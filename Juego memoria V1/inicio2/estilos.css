@@ -1,0 +1,143 @@
+/* ==============================
+   FONDO GENERAL DE LA PÁGINA
+   ============================== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #222;
+  position: relative;
+  min-height: 100vh;
+
+  /* Imagen de fondo general (marca de agua de página) */
+  background: url('imagenes/fondo2.jpg') center/cover no-repeat fixed;
+}
+
+/* Efecto de marca de agua suave sobre toda la página */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.48); /* suaviza la imagen */
+  /*backdrop-filter: blur(2px); /* efecto de difuminado */
+  z-index: -1;
+}
+
+/* ==============================
+   TITULOS Y ELEMENTOS PRINCIPALES
+   ============================== */
+h1 {
+  text-align: center;
+  color: #470202;
+  font-weight: bold;
+}
+
+h2, h4 {
+  color: #3d0101;
+}
+
+/* ==============================
+   PANEL SUPERIOR DE INFORMACIÓN
+   ============================== */
+.info {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 10px 0 20px;
+  color: #01152c;
+  font-weight: 500;
+}
+
+#btnIniciar {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#btnIniciar:hover {
+  background-color: #1b5e20;
+}
+
+/* ==============================
+   TABLERO DE JUEGO
+   ============================== */
+.tablero {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px auto 30px;
+
+  /* Imagen de fondo del tablero (marca de agua interna) */
+  background: 
+    rgba(255,255,255,0.85) 
+    url('imagenes/marca-agua.png') 
+    center/50% no-repeat;
+  background-blend-mode: lighten;
+}
+
+/* Cada carta o imagen dentro del tablero */
+.tablero img {
+  width: 90px;
+  height: 90px;
+  margin: 5px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+
+  /* Marca de agua sobre cada carta */
+  background: rgba(255,255,255,0.7) url('imagenes/marca-agua.png') center/80% no-repeat;
+  background-blend-mode: lighten;
+
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.tablero img:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* ==============================
+   TABLA DE PUNTAJES
+   ============================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: rgba(255,255,255,0.9);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+/* ==============================
+   AJUSTES RESPONSIVOS
+   ============================== */
+@media (max-width: 768px) {
+  .info {
+    flex-direction: column;
+    align-items: center;
+  }
+  .tablero img {
+    width: 70px;
+    height: 70px;
+  }
+}
