@@ -1,11 +1,16 @@
 // ======================== VARIABLES GLOBALES ========================
 const d = document;
 
+// --- al inicio, donde defines variables globales ---
+let startTime = null; // marca de tiempo cuando inicia cada juego
 let usuario = "";
 let nivel = 1;
 let tiempo = 60;
 let timer = null;
 let juegoIniciado = false;
+let tiempoTotal = 0;
+let tiempoSobrante = 0;
+let musicaFondo = null;
 
 let imagenNombre = [];
 let imagenID = [];
@@ -21,6 +26,47 @@ const spanTiempo = d.getElementById("tiempo");
 const spanNivel = d.getElementById("nivel");
 const emoji = d.getElementById("emoji");
 const btnIniciar = d.getElementById("btnIniciar");
+const tablaRecords = document.querySelector(".records tbody");
+const fondo = document.body; // cambiar fondo general
+
+// ======== MÚSICA DE FONDO SEGÚN NIVEL =========
+function reproducirMusica(nivel) {
+    // Detener la música anterior si existe
+    if (musicaFondo) {
+        musicaFondo.pause();
+        musicaFondo.currentTime = 0;
+    }
+
+    const archivo = `sonidos/sonido${nivel}.mp3`;
+    musicaFondo = new Audio(archivo);
+    musicaFondo.volume = 0.3; // volumen moderado
+    musicaFondo.loop = true;
+    musicaFondo.play().catch(err => console.warn("Audio no pudo iniciar automáticamente:", err));
+}
+
+// ======== CAMBIO DE FONDO SEGÚN NIVEL =========
+function cambiarFondo(nivel) {
+    let ruta = "";
+
+    // Fondo fijo para cada nivel
+    if (nivel === 1) {
+        ruta = "imagenes/fondo1.jpg";
+    } else if (nivel === 2) {
+        ruta = "imagenes/fondo2.jpg";
+    } else if (nivel === 3) {
+        ruta = "imagenes/fondo3.jpg";
+    } else {
+        ruta = "imagenes/fondo_default.jpg"; // si hay error o más niveles
+    }
+
+    // Aplicar fondo
+    document.body.style.backgroundImage = `url('${ruta}')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.transition = "background-image 0.8s ease";
+}
+
 
 // ================== MODAL DE USUARIO ==================
 function pedirNombre() {
@@ -86,7 +132,7 @@ function iniciarJuego() {
     imagenID = [];
     tiempo = 60;
     spanTiempo.style.color = "black";
-    emoji.textContent = "😊";
+    if (emoji) emoji.textContent = "😊";
     juegoIniciado = true;
 
     spanNivel.textContent = nivel;
@@ -94,14 +140,20 @@ function iniciarJuego() {
     spanAciertos.textContent = aciertos;
     spanTiempo.textContent = tiempo;
 
+    // Guardamos el momento de inicio para calcular tiempo total después
+    startTime = Date.now();
+    cambiarFondo(nivel);       // 👈 cambia color de fondo
+    reproducirMusica(nivel);   // 👈 cambia música
+
     agregarImagenes();
 
     clearInterval(timer);
     timer = setInterval(actualizarTiempo, 1000);
 
-    // Guardar datos iniciales
-    guardarDatosJuego();
+    // Guardar datos iniciales en localStorage si quieres
+    guardarDatosJuego && guardarDatosJuego();
 }
+
 
 // ================== AGREGAR IMÁGENES ==================
 function agregarImagenes() {
@@ -133,19 +185,36 @@ function actualizarTiempo() {
 
     if (tiempo <= 10 && tiempo > 0) {
         spanTiempo.style.color = "red";
-        emoji.textContent = "😟";
+        if (emoji) emoji.textContent = "😬";
     }
 
-        guardarDatosJuego();
-
-        if (tiempo <= 0) {
+    if (tiempo <= 0) {
         clearInterval(timer);
-        alert("⏰ Tiempo agotado! Has perdido, volverás al nivel 1 😢");
-        guardarRecord(usuario, 0, intentos);
-        nivel = 1; // <-- Reajuste obligatorio al perder
+        tiempoTotal = Math.round((Date.now() - startTime) / 1000);
+        tiempoSobrante = 0;
+        guardarRecord(usuario, nivel, tiempoTotal, intentos, tiempoSobrante);
+        alert("⏰ Tiempo agotado! Has perdido. Volverás al nivel 1.");
+        nivel = 1;
         reiniciarJuego(true);
     }
 
+    // Guardar estado si tienes esa función
+    guardarDatosJuego && guardarDatosJuego();
+
+    if (tiempo <= 0) {
+        clearInterval(timer);
+        const tiempoTotal = Math.round((Date.now() - (startTime || Date.now())) / 1000);
+        console.log("⏰ Tiempo agotado. Guardando record parcial:", { usuario, nivel, tiempoTotal, intentos });
+
+        // Guardamos registro del intento aunque haya perdido (nivel alcanzado)
+        guardarRecord(usuario, nivel, tiempoTotal, intentos);
+
+        // Reiniciamos el juego y forzamos volver a nivel 1
+        nivel = 1;
+        localStorage.setItem("nivel", nivel);
+        reiniciarJuego(true);
+        alert("⏰ Tiempo agotado! Has perdido. Volviendo al nivel 1.");
+    }
 }
 
 // ================== MOSTRAR IMAGEN ==================
@@ -209,20 +278,27 @@ function compararImg() {
 // ================== SUBIR DE NIVEL ==================
 function subirNivel() {
     clearInterval(timer);
+
+    tiempoTotal = Math.round((Date.now() - startTime) / 1000);
+    tiempoSobrante = tiempo; // segundos que sobraron
+    guardarRecord(usuario, nivel, tiempoTotal, intentos, tiempoSobrante);
+
     alert(`🎉 Felicidades ${usuario}! Completaste el nivel ${nivel}`);
+
     nivel++;
     localStorage.setItem("nivel", nivel);
-    guardarDatosJuego();
 
     if (nivel > 3) {
-        alert("🏆 ¡Felicidades, has pasado el juego completo!");
-        borrarDatosJuego();
+        alert("🏆 ¡Has completado todos los niveles!");
+        nivel = 1;
         reiniciarJuego(true);
         return;
     }
 
     iniciarJuego();
 }
+
+
 
 // ================== REINICIAR ==================
 function reiniciarJuego(final = false) {
@@ -269,24 +345,42 @@ function borrarDatosJuego() {
     localStorage.removeItem("datosJuego");
 }
 
-// ================== TABLA DE RECORDS ==================
-const tablaRecords = document.querySelector(".records tbody");
 
 // Cargar records previos al iniciar
 window.addEventListener("DOMContentLoaded", mostrarRecords);
 
-function guardarRecord(jugador, tiempo, intentos) {
+// ================== TABLA DE RECORDS DEFINITIVA ==================
+function guardarRecord(jugador, nivel, tiempoTotal, intentos, tiempoSobrante) {
+    if (!jugador || jugador === "") jugador = "Anónimo";
+
+    // Asegurar números válidos
+    tiempoTotal = Number(tiempoTotal) || 0;
+    intentos = Number(intentos) || 0;
+    tiempoSobrante = Number(tiempoSobrante) || 0;
+    nivel = Number(nivel) || 1;
+
     const records = JSON.parse(localStorage.getItem("records")) || [];
 
     const nuevo = {
         jugador,
-        tiempo,
-        intentos,
+        tiempoTotal,
+        intentosTotales: intentos,
+        tiempoSobrante,
+        nivel,
         fecha: new Date().toLocaleString()
     };
 
     records.push(nuevo);
-    localStorage.setItem("records", JSON.stringify(records));
+
+    // Ordenar por: nivel DESC, tiempoSobrante DESC, intentos ASC
+    records.sort((a, b) => {
+        if (b.nivel !== a.nivel) return b.nivel - a.nivel;
+        if (b.tiempoSobrante !== a.tiempoSobrante) return b.tiempoSobrante - a.tiempoSobrante;
+        return a.intentosTotales - b.intentosTotales;
+    });
+
+    const top10 = records.slice(0, 10);
+    localStorage.setItem("records", JSON.stringify(top10));
     mostrarRecords();
 }
 
@@ -295,13 +389,24 @@ function mostrarRecords() {
     tablaRecords.innerHTML = "";
 
     records.forEach((r, i) => {
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
+        const jugador = r.jugador ?? "Desconocido";
+        const tiempoTotal = r.tiempoTotal ?? 0;
+        const intentosTotales = r.intentosTotales ?? 0;
+        const tiempoSobrante = r.tiempoSobrante ?? 0;
+        const nivel = r.nivel ?? 1;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
             <td>${i + 1}</td>
-            <td>${r.jugador}</td>
-            <td>${r.tiempo}s</td>
-            <td>${r.intentos}</td>
+            <td>${jugador}</td>
+            <td>${tiempoTotal}s</td>
+            <td>${intentosTotales}</td>
+            <td>${tiempoSobrante}s</td>
+            <td>${nivel}</td>
         `;
-        tablaRecords.appendChild(fila);
+        tablaRecords.appendChild(tr);
     });
 }
+
+
+window.addEventListener("DOMContentLoaded", mostrarRecords);
